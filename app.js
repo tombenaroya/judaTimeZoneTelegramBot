@@ -26,15 +26,16 @@ app.get('/', async (req, res) => {
   const eveningYetzia = calcEveningYetzia(yetzia).format('HH:mm');
 
   const messageToBot = `
-	שבת פרשת ${parasha}
+	*זמני תפילות מרכז "ואהבת" חב"ד צופים*
+	שבת פרשת ${parasha}:
 
 	הדלקת נרות ${hadlaka.format('HH:mm')}
 
-	מנחה ערב שבת ${eveningMinha} ומיד לאחר מכן קבלת שבת
-	שיעור חסידות 8:30
-	שחרית 9:00
-	מנחה בשבת ${saturedayMinha}
-	ערבית צאת שבת ${eveningYetzia}
+	*מנחה ערב שבת* ${eveningMinha} ומיד לאחר מכן קבלת שבת
+	*שיעור חסידות* 8:30
+	*שחרית* 9:00
+	*מנחה בשבת* ${saturedayMinha}
+	*ערבית צאת שבת* ${eveningYetzia}
 	מוצאי שבת בשעה ${yetzia.format('HH:mm')}
 	`;
 
