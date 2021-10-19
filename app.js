@@ -9,10 +9,13 @@ const { api } = require('./api');
 const { parse } = require('node-html-parser');
 const moment = require('moment');
 const { calcMinhaSaturdayEvening, calcSaturdayMinha, calcEveningYetzia } = require('./time');
+const { getNextMonth } = require('./hebrewMonths');
 
 const TelegramBot = require('node-telegram-bot-api');
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const CHAT_ID = -766161903;
+
+const Hebcal = require('hebcal');
 
 app.get('/', async (req, res) => {
   const htmlResponse = await api.get();
@@ -25,22 +28,28 @@ app.get('/', async (req, res) => {
   const yetzia = moment(root.querySelector('#content_yetzia').innerText.substring(11), 'HH:mm');
   const eveningYetzia = calcEveningYetzia(yetzia).format('HH:mm');
 
+  const date = root.querySelector('.selectedParasha > .parashaTime').innerText.match(/-(.*)/)[1];
+  const hebrewDate = new Hebcal.HDate(moment(date, 'DD/MM/YYYY').toDate());
+
   const messageToBot = `
 	*זמני תפילות מרכז "ואהבת" חב"ד צופים*
-	שבת פרשת ${parasha}:
+  שבת ${
+    hebrewDate.day >= 23 ? `*מברכים* חודש ${getNextMonth(hebrewDate.month - 1)} ` : ''
+  }פרשת ${parasha}:
 
 	הדלקת נרות ${hadlaka.format('HH:mm')}
 
-	*מנחה ערב שבת* ${eveningMinha} ומיד לאחר מכן קבלת שבת
-	*שיעור חסידות* 8:30
-	*שחרית* 9:00
+	*מנחה ערב שבת* ${eveningMinha} ומיד לאחר מכן קבלת שבת${
+    hebrewDate.day >= 23 ? '' : '\n*שיעור חסידות* 8:30'
+  }
+	*שחרית* 9:00${hebrewDate.day >= 23 ? '\nומיד לאחר מכן קידוש חגיגי לכבוד שבת מברכים' : ''}
 	*מנחה בשבת* ${saturedayMinha}
 	*ערבית צאת שבת* ${eveningYetzia}
 	מוצאי שבת בשעה ${yetzia.format('HH:mm')}
 	`;
 
   bot.sendMessage(CHAT_ID, messageToBot);
-  res.send();
+  res.send(messageToBot);
 });
 
 app.listen(port, () => {
