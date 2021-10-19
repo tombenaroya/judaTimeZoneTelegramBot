@@ -39,9 +39,8 @@ app.get('/', async (req, res) => {
 
 	הדלקת נרות ${hadlaka.format('HH:mm')}
 
-	*מנחה ערב שבת* ${eveningMinha} ומיד לאחר מכן קבלת שבת${
-    hebrewDate.day >= 23 ? '' : '\n*שיעור חסידות* 8:30'
-  }
+  *מנחה ערב שבת* ${eveningMinha} ומיד לאחר מכן קבלת שבת
+  *שיעור חסידות* 8:30
 	*שחרית* 9:00${hebrewDate.day >= 23 ? '\nומיד לאחר מכן קידוש חגיגי לכבוד שבת מברכים' : ''}
 	*מנחה בשבת* ${saturedayMinha}
 	*ערבית צאת שבת* ${eveningYetzia}
